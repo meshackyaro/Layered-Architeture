@@ -85,11 +85,11 @@ public class NoteServicesImplTest {
         UpdateNoteRequest updateNoteRequest = new UpdateNoteRequest();
         updateNoteRequest.setAuthor(createNoteRequest.getAuthor());
         updateNoteRequest.setNewTitle("New Title");
-        updateNoteRequest.setNewBody("New Body");
+        updateNoteRequest.setNewContent("New Body");
 
         createNoteRequest.setTitle(updateNoteRequest.getNewTitle());
-        createNoteRequest.setContent(updateNoteRequest.getNewBody());
-        UpdateNoteResponse response2 = noteServices.updateNote(updateNoteRequest, createNoteRequest);
+        createNoteRequest.setContent(updateNoteRequest.getNewContent());
+        UpdateNoteResponse response2 = noteServices.updateNote(updateNoteRequest);
 
         long currentNotes = noteServices.findAll().size();
         assertEquals(currentNotes, noteServices.count());

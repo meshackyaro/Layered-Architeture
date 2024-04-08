@@ -5,6 +5,6 @@ import lombok.Data;
 public class UpdateNoteRequest {
     private String author;
     private String newTitle;
-    private String newBody;
+    private String newContent;
     private String oldTitle;
 }

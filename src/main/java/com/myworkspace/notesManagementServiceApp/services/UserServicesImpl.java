@@ -9,6 +9,7 @@ import com.myworkspace.notesManagementServiceApp.dtos.responses.RegistrationResp
 import com.myworkspace.notesManagementServiceApp.dtos.responses.LoginResponse;
 import com.myworkspace.notesManagementServiceApp.dtos.responses.LogoutResponse;
 import com.myworkspace.notesManagementServiceApp.exceptions.IncorrectPasswordException;
+import com.myworkspace.notesManagementServiceApp.exceptions.NullValueException;
 import com.myworkspace.notesManagementServiceApp.exceptions.UnregisteredUserException;
 import com.myworkspace.notesManagementServiceApp.exceptions.UserAlreadyExistException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,13 @@ public class UserServicesImpl implements UserServices {
         User user = new User();
         if (findUserByUsername(registerRequest.getUsername()) != null)
             throw new UserAlreadyExistException("username already exist");
+        boolean isUsernameEmpty = registerRequest.getUsername().isEmpty();
+        if (isUsernameEmpty)
+            throw new NullValueException("Username must not be empty");
+        boolean isPasswordEmpty = registerRequest.getPassword().isEmpty();
+        if (isPasswordEmpty)
+            throw new NullValueException("Password field must not be empty");
+
         user.setUsername(registerRequest.getUsername());
         user.setPassword(registerRequest.getPassword());
         userRepository.save(user);
@@ -43,9 +51,11 @@ public class UserServicesImpl implements UserServices {
     @Override
     public LoginResponse login(LoginUserRequest loginRequest) {
         User foundUser = findUserByUsername(loginRequest.getUsername());
-        if (foundUser == null) throw new UnregisteredUserException("You do not have an account, please signup to login");
+        if (foundUser == null)
+            throw new UnregisteredUserException("You do not have an account, please signup to login");
 //        User logInUser = userRepository.findUserByUsername(loginRequest.getUsername());
-        if (!foundUser.getPassword().equals(loginRequest.getPassword()))  throw new IncorrectPasswordException("Incorrect password");
+        if (!foundUser.getPassword().equals(loginRequest.getPassword()))
+            throw new IncorrectPasswordException("Incorrect password");
         foundUser.setLogged(true);
         userRepository.save(foundUser);
 

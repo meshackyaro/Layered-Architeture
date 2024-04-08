@@ -12,8 +12,6 @@ import java.util.List;
 @Document("Users")
 public class User {
     private String id;
-    private String firstName;
-    private String lastName;
     private String username;
     private String password;
     private boolean isLogged;
