@@ -28,6 +28,8 @@ public class NoteServicesImpl implements NoteServices {
         User foundUser = userServices.findUserByUsername(createNoteRequest.getAuthor());
         if (foundUser == null)
             throw new UserNotFoundException("User not found");
+        if (!foundUser.isLogged())
+            throw new UserNotFoundException("User is not logged");
         if (createNoteRequest.getTitle().isEmpty())
             throw new NullValueException("Title field can not be empty");
         if (createNoteRequest.getContent().isEmpty())

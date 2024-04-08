@@ -44,7 +44,7 @@ public class UserServicesImpl implements UserServices {
 
         RegistrationResponse registrationResponse = new RegistrationResponse();
         registrationResponse.setUsername(registerRequest.getUsername());
-        registrationResponse.setMessage("Your registration Successful");
+        registrationResponse.setMessage("Registration Successful");
         return registrationResponse;
     }
 
