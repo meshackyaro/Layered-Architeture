@@ -90,7 +90,6 @@ public class NoteServicesImplTest {
         createNoteRequest.setTitle(updateNoteRequest.getNewTitle());
         createNoteRequest.setContent(updateNoteRequest.getNewContent());
         UpdateNoteResponse response2 = noteServices.updateNote(updateNoteRequest);
-
         long currentNotes = noteServices.findAll().size();
         assertEquals(currentNotes, noteServices.count());
         assertEquals("New Title", response2.getNewTitle());
@@ -126,7 +125,7 @@ public class NoteServicesImplTest {
         assertEquals("Title", foundNote.getTitle());
 
         DeleteNoteRequest deleteNote = new DeleteNoteRequest();
-        deleteNote.setNoteTitle("Title");
+        deleteNote.setTitle("Title");
         deleteNote.setAuthor(createNoteRequest.getAuthor());
         DeleteNoteResponse response2 = noteServices.deleteNote(deleteNote);
         long currentNotes = noteServices.findAll().size();
@@ -151,7 +150,7 @@ public class NoteServicesImplTest {
         assertTrue(user.isLogged());
 
         DeleteNoteRequest deleteNote = new DeleteNoteRequest();
-        deleteNote.setNoteTitle("Title");
+        deleteNote.setTitle("Title");
         deleteNote.setAuthor("username76");
         assertThrows(NoteNotFoundException.class, ()-> noteServices.deleteNote(deleteNote));
     }

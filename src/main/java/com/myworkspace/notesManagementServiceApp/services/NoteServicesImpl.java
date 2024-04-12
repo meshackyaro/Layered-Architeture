@@ -29,11 +29,11 @@ public class NoteServicesImpl implements NoteServices {
         if (foundUser == null)
             throw new UserNotFoundException("User not found");
         if (!foundUser.isLogged())
-            throw new UserNotFoundException("User is not logged");
+            throw new UserNotFoundException("Login to create note");
         if (createNoteRequest.getTitle().isEmpty())
             throw new NullValueException("Title field can not be empty");
         if (createNoteRequest.getContent().isEmpty())
-            throw new NullValueException("Content field can not be empty");
+            throw new NullValueException("Empty note");
         if (createNoteRequest.getAuthor().isEmpty())
             throw new NullValueException("Author field can not be empty");
 
@@ -44,6 +44,9 @@ public class NoteServicesImpl implements NoteServices {
         noteRepository.save(note);
 
         CreateNoteResponse createNoteResponse = new CreateNoteResponse();
+        createNoteResponse.setTitle(createNoteRequest.getTitle());
+        createNoteResponse.setContent(createNoteRequest.getContent());
+        createNoteResponse.setAuthor(createNoteRequest.getAuthor());
         createNoteResponse.setMessage("Note Created Successfully");
         return createNoteResponse;
 
@@ -54,14 +57,14 @@ public class NoteServicesImpl implements NoteServices {
         User foundUser = userServices.findUserByUsername(updateRequest.getAuthor());
         if (foundUser == null) throw new UserNotFoundException("User not found");
 
-        Note foundNote = noteRepository.findNoteByTitle(updateRequest.getOldTitle());
-        if (foundNote == null) throw new NoteNotFoundException("Note not found");
-        if (findNoteByTitle(updateRequest.getOldTitle()) == null)
-            throw new NullValueException("Title field can not be empty");
-        if (findNoteByTitle(updateRequest.getNewTitle()) == null)
-            throw new NullValueException("Title field can not be empty");
-        if (findNoteByTitle(updateRequest.getNewContent()) == null)
-            throw new NullValueException("Content field can not be empty");
+        Note foundNote = noteRepository.findNoteByTitle(updateRequest.getTitle());
+//        if (foundNote == null) throw new NoteNotFoundException("Note not found");
+//        if (findNoteByTitle(updateRequest.getOldTitle()) == null)
+//            throw new NullValueException("Title field can not be empty");
+//        if (findNoteByTitle(updateRequest.getNewTitle()) == null)
+//            throw new NullValueException("Title field can not be empty");
+//        if (findNoteByTitle(updateRequest.getNewContent()) == null)
+//            throw new NullValueException("Content field can not be empty");
 
         foundNote.setTitle(updateRequest.getNewTitle());
         foundNote.setContent(updateRequest.getNewContent());
@@ -72,7 +75,7 @@ public class NoteServicesImpl implements NoteServices {
         updateResponse.setNewTitle(updateRequest.getNewTitle());
         updateResponse.setNewContent(updateRequest.getNewContent());
         updateResponse.setAuthor(updateRequest.getAuthor());
-        updateResponse.setMessage("Updated");
+        updateResponse.setMessage("Note updated");
         return updateResponse;
     }
 
@@ -86,13 +89,14 @@ public class NoteServicesImpl implements NoteServices {
 //        if (noteRepository.findNoteByTitle(deleteNoteRequest.getNoteTitle()) != null)
 //            throw new NoteDoesNotExistException("Sorry, note doesn't exist");
         //Note note = noteRepository.findNoteByTitle(deleteNoteRequest.getNoteTitle());
-        Note foundNote = findNoteByTitle(deleteNoteRequest.getNoteTitle());
+        Note foundNote = findNoteByTitle(deleteNoteRequest.getTitle());
         if (foundNote == null)
-            throw new NoteNotFoundException("Not found");
+            throw new NoteNotFoundException("Note not found");
         noteRepository.delete(foundNote);
 
         DeleteNoteResponse deleteResponse = new DeleteNoteResponse();
-        deleteResponse.setTitle(deleteNoteRequest.getNoteTitle());
+        deleteResponse.setAuthor(deleteNoteRequest.getAuthor());
+        deleteResponse.setTitle(deleteNoteRequest.getTitle());
         deleteResponse.setMessage("Deleted");
         return deleteResponse;
     }

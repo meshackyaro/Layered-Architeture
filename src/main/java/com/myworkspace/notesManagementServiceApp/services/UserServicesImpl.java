@@ -8,10 +8,7 @@ import com.myworkspace.notesManagementServiceApp.dtos.requests.RegisterUserReque
 import com.myworkspace.notesManagementServiceApp.dtos.responses.RegistrationResponse;
 import com.myworkspace.notesManagementServiceApp.dtos.responses.LoginResponse;
 import com.myworkspace.notesManagementServiceApp.dtos.responses.LogoutResponse;
-import com.myworkspace.notesManagementServiceApp.exceptions.IncorrectPasswordException;
-import com.myworkspace.notesManagementServiceApp.exceptions.NullValueException;
-import com.myworkspace.notesManagementServiceApp.exceptions.UnregisteredUserException;
-import com.myworkspace.notesManagementServiceApp.exceptions.UserAlreadyExistException;
+import com.myworkspace.notesManagementServiceApp.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -29,14 +26,9 @@ public class UserServicesImpl implements UserServices {
     @Override
     public RegistrationResponse register(RegisterUserRequest registerRequest) {
         User user = new User();
-        if (findUserByUsername(registerRequest.getUsername()) != null)
-            throw new UserAlreadyExistException("username already exist");
-        boolean isUsernameEmpty = registerRequest.getUsername().isEmpty();
-        if (isUsernameEmpty)
-            throw new NullValueException("Username must not be empty");
-        boolean isPasswordEmpty = registerRequest.getPassword().isEmpty();
-        if (isPasswordEmpty)
-            throw new NullValueException("Password field must not be empty");
+        validateUser(registerRequest);
+        validateUsernameFor(registerRequest);
+        validatePasswordFor(registerRequest);
 
         user.setUsername(registerRequest.getUsername());
         user.setPassword(registerRequest.getPassword());
@@ -48,14 +40,27 @@ public class UserServicesImpl implements UserServices {
         return registrationResponse;
     }
 
+    private void validateUser(RegisterUserRequest registerRequest) {
+        if (findUserByUsername(registerRequest.getUsername()) != null)
+            throw new UserAlreadyExistException("username already exist");
+    }
+
+    private static void validatePasswordFor(RegisterUserRequest registerRequest) {
+        if (registerRequest.getPassword().matches("[a-zA-Z0-9]+]"))
+            throw new InvalidPasswordException("Incorrect password format. Please use uppercase, lowercase letters and digits only");
+    }
+
+    private static void validateUsernameFor(RegisterUserRequest registerRequest) {
+        if (registerRequest.getUsername().matches("[a-zA-Z0-9]+]"))
+            throw new InvalidUsernameException("Incorrect username format. Please use uppercase, lowercase and/or digits only.");
+    }
+
     @Override
     public LoginResponse login(LoginUserRequest loginRequest) {
         User foundUser = findUserByUsername(loginRequest.getUsername());
         if (foundUser == null)
-            throw new UnregisteredUserException("You do not have an account, please signup to login");
-//        User logInUser = userRepository.findUserByUsername(loginRequest.getUsername());
-        if (!foundUser.getPassword().equals(loginRequest.getPassword()))
-            throw new IncorrectPasswordException("Incorrect password");
+            throw new UserNotFoundException("User not found");
+
         foundUser.setLogged(true);
         userRepository.save(foundUser);
 
@@ -72,6 +77,7 @@ public class UserServicesImpl implements UserServices {
         userRepository.save(user);
 
         LogoutResponse logoutResponse = new LogoutResponse();
+        logoutResponse.setUsername(logoutResponse.getUsername());
         logoutResponse.setMessage("Logout Successful");
         return logoutResponse;
     }

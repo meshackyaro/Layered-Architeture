@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class DeleteNoteRequest {
     private String author;
-    private String noteTitle;
+    private String title;
 }

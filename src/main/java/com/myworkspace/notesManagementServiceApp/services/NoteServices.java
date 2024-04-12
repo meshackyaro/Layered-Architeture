@@ -7,8 +7,6 @@ import com.myworkspace.notesManagementServiceApp.dtos.requests.UpdateNoteRequest
 import com.myworkspace.notesManagementServiceApp.dtos.responses.CreateNoteResponse;
 import com.myworkspace.notesManagementServiceApp.dtos.responses.DeleteNoteResponse;
 import com.myworkspace.notesManagementServiceApp.dtos.responses.UpdateNoteResponse;
-
-import java.util.Collection;
 import java.util.List;
 
 public interface NoteServices {

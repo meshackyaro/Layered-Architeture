@@ -7,7 +7,6 @@ import com.myworkspace.notesManagementServiceApp.dtos.requests.LogoutUserRequest
 import com.myworkspace.notesManagementServiceApp.dtos.requests.RegisterUserRequest;
 import com.myworkspace.notesManagementServiceApp.dtos.responses.LoginResponse;
 import com.myworkspace.notesManagementServiceApp.dtos.responses.LogoutResponse;
-import com.myworkspace.notesManagementServiceApp.exceptions.UnregisteredUserException;
 import com.myworkspace.notesManagementServiceApp.exceptions.UserAlreadyExistException;
 import com.myworkspace.notesManagementServiceApp.exceptions.UserNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -31,7 +30,6 @@ public class UserServicesImplTest {
         userServices.register(registerRequest);
         long currentlyRegistered = userServices.findAll().size();
         assertEquals(currentlyRegistered, userServices.getNumberOfUsers());
-
     }
     @Test
     public void newUserRegistration_registeredUserIncreasesTest() {
@@ -78,12 +76,12 @@ public class UserServicesImplTest {
         assertTrue(user.isLogged());
     }
     @Test
-    public void unregisteredUserLogin_throwUnregisteredUserExceptionTest() {
+    public void unregisteredUserLogin_throwUserNotFoundExceptionTest() {
         userRepository.deleteAll();
         LoginUserRequest loginRequest = new LoginUserRequest();
         loginRequest.setUsername("username");
         loginRequest.setPassword("password");
-        assertThrows(UnregisteredUserException.class, ()-> userServices.login(loginRequest));
+        assertThrows(UserNotFoundException.class, ()-> userServices.login(loginRequest));
     }
     @Test
     public void logoutTest() {
@@ -94,12 +92,14 @@ public class UserServicesImplTest {
         userServices.register(registerUserRequest);
         long currentlyRegistered = userRepository.findAll().size();
         assertEquals(currentlyRegistered, userServices.getNumberOfUsers());
+
         LoginUserRequest loginRequest = new LoginUserRequest();
         loginRequest.setUsername(registerUserRequest.getUsername());
         loginRequest.setPassword(registerUserRequest.getPassword());
         LoginResponse login = userServices.login(loginRequest);
         User user = userRepository.findByUsername(loginRequest.getUsername());
         assertTrue(user.isLogged());
+
         LogoutUserRequest logoutRequest = new LogoutUserRequest();
         logoutRequest.setUsername("username");
         LogoutResponse logout = userServices.logout(logoutRequest);

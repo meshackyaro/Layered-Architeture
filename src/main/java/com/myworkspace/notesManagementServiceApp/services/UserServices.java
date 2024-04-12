@@ -15,7 +15,7 @@ public interface UserServices {
 
     RegistrationResponse register(RegisterUserRequest registerRequest);
 
-    LoginResponse login(LoginUserRequest loginRequest);
+     LoginResponse login(LoginUserRequest loginRequest);
 
     LogoutResponse logout(LogoutUserRequest logoutRequest);
 

@@ -1,6 +1,5 @@
 package com.myworkspace.notesManagementServiceApp.controllers;
 
-import com.myworkspace.notesManagementServiceApp.data.model.User;
 import com.myworkspace.notesManagementServiceApp.dtos.requests.*;
 import com.myworkspace.notesManagementServiceApp.dtos.responses.*;
 import com.myworkspace.notesManagementServiceApp.exceptions.NoteManagerException;
@@ -26,7 +25,8 @@ public class UserController {
         try {
             RegistrationResponse response = userServices.register(registerRequest);
             return new ResponseEntity<>(new APIResponse(true, response), CREATED);
-        } catch(NoteManagerException e) {
+        }
+        catch(NoteManagerException e) {
             return new ResponseEntity<>(new APIResponse(false, e.getMessage()), BAD_REQUEST);
         }
     }
@@ -35,7 +35,8 @@ public class UserController {
         try {
             LoginResponse response = userServices.login(loginRequest);
             return new ResponseEntity<>(new APIResponse(true, response), CREATED);
-        } catch(NoteManagerException e) {
+        }
+        catch(NoteManagerException e) {
             return new ResponseEntity<>(new APIResponse(false, e.getMessage()), BAD_REQUEST);
         }
     }
@@ -44,16 +45,18 @@ public class UserController {
         try {
             CreateNoteResponse response = noteServices.createNote(createNoteRequest);
             return new ResponseEntity<>(new APIResponse(true, response), CREATED);
-        } catch(NoteManagerException e) {
+        }
+        catch(NoteManagerException e) {
             return new ResponseEntity<>(new APIResponse(false, e.getMessage()), BAD_REQUEST);
         }
     }
     @PatchMapping("/updateNote")
-    public ResponseEntity<?> updateNote(@RequestBody UpdateNoteRequest updateNoteRequest) {
+    public ResponseEntity<?> updateNote(@RequestBody UpdateNoteRequest updateNoteRequest, String name) {
         try {
             UpdateNoteResponse response = noteServices.updateNote(updateNoteRequest);
             return new ResponseEntity<>(new APIResponse(true, response), CREATED);
-        } catch(NoteManagerException e) {
+        }
+        catch(NoteManagerException e) {
             return new ResponseEntity<>(new APIResponse(false, e.getMessage()), BAD_REQUEST);
         }
     }
@@ -62,7 +65,8 @@ public class UserController {
         try {
             DeleteNoteResponse response = noteServices.deleteNote(deleteNoteRequest);
             return new ResponseEntity<>(new APIResponse(true, response), CREATED);
-        } catch(NoteManagerException e) {
+        }
+        catch(NoteManagerException e) {
             return new ResponseEntity<>(new APIResponse(false, e.getMessage()), BAD_REQUEST);
         }
     }
@@ -71,7 +75,8 @@ public class UserController {
         try {
             LogoutResponse response = userServices.logout(logoutRequest);
             return new ResponseEntity<>(new APIResponse(true, response), CREATED);
-        } catch(NoteManagerException e) {
+        }
+        catch(NoteManagerException e) {
             return new ResponseEntity<>(new APIResponse(false, e.getMessage()), BAD_REQUEST);
         }
     }
