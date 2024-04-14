@@ -56,7 +56,6 @@ public class NoteServicesImpl implements NoteServices {
     public UpdateNoteResponse updateNote(UpdateNoteRequest updateRequest) {
         User foundUser = userServices.findUserByUsername(updateRequest.getAuthor());
         if (foundUser == null) throw new UserNotFoundException("User not found");
-
         Note foundNote = noteRepository.findNoteByTitle(updateRequest.getTitle());
 //        if (foundNote == null) throw new NoteNotFoundException("Note not found");
 //        if (findNoteByTitle(updateRequest.getOldTitle()) == null)
@@ -65,7 +64,6 @@ public class NoteServicesImpl implements NoteServices {
 //            throw new NullValueException("Title field can not be empty");
 //        if (findNoteByTitle(updateRequest.getNewContent()) == null)
 //            throw new NullValueException("Content field can not be empty");
-
         foundNote.setTitle(updateRequest.getNewTitle());
         foundNote.setContent(updateRequest.getNewContent());
         foundNote.setAuthor(foundUser.getUsername());

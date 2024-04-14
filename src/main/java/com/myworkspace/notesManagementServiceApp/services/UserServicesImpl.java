@@ -47,12 +47,12 @@ public class UserServicesImpl implements UserServices {
 
     private static void validatePasswordFor(RegisterUserRequest registerRequest) {
         if (registerRequest.getPassword().matches("[a-zA-Z0-9]+]"))
-            throw new InvalidPasswordException("Incorrect password format. Please use uppercase, lowercase letters and digits only");
+            throw new InvalidPasswordException("Incorrect password format. Use uppercase, lowercase letters and/or digits only");
     }
 
     private static void validateUsernameFor(RegisterUserRequest registerRequest) {
         if (registerRequest.getUsername().matches("[a-zA-Z0-9]+]"))
-            throw new InvalidUsernameException("Incorrect username format. Please use uppercase, lowercase and/or digits only.");
+            throw new InvalidUsernameException("Incorrect username format. Use uppercase, lowercase and/or digits only.");
     }
 
     @Override
