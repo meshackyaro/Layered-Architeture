@@ -1,12 +1,8 @@
 package com.myworkspace.notesManagementServiceApp.services;
 
 import com.myworkspace.notesManagementServiceApp.data.model.User;
-import com.myworkspace.notesManagementServiceApp.dtos.requests.LoginUserRequest;
-import com.myworkspace.notesManagementServiceApp.dtos.requests.LogoutUserRequest;
-import com.myworkspace.notesManagementServiceApp.dtos.requests.RegisterUserRequest;
-import com.myworkspace.notesManagementServiceApp.dtos.responses.RegistrationResponse;
-import com.myworkspace.notesManagementServiceApp.dtos.responses.LoginResponse;
-import com.myworkspace.notesManagementServiceApp.dtos.responses.LogoutResponse;
+import com.myworkspace.notesManagementServiceApp.dtos.requests.*;
+import com.myworkspace.notesManagementServiceApp.dtos.responses.*;
 
 import java.util.List;
 
@@ -22,4 +18,10 @@ public interface UserServices {
     List<User> findAll();
 
     User findUserByUsername(String username);
+
+    CreateNoteResponse createNote(CreateNoteRequest createNoteRequest);
+
+    UpdateNoteResponse updateNote(UpdateNoteRequest updateNoteRequest);
+
+    DeleteNoteResponse deleteNote(DeleteNoteRequest deleteNoteRequest);
 }

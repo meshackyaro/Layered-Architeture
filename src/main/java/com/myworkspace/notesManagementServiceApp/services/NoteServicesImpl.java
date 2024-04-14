@@ -1,7 +1,6 @@
 package com.myworkspace.notesManagementServiceApp.services;
 
 import com.myworkspace.notesManagementServiceApp.data.model.Note;
-import com.myworkspace.notesManagementServiceApp.data.model.User;
 import com.myworkspace.notesManagementServiceApp.data.repositories.NoteRepository;
 import com.myworkspace.notesManagementServiceApp.dtos.requests.CreateNoteRequest;
 import com.myworkspace.notesManagementServiceApp.dtos.requests.DeleteNoteRequest;
@@ -11,7 +10,6 @@ import com.myworkspace.notesManagementServiceApp.dtos.responses.DeleteNoteRespon
 import com.myworkspace.notesManagementServiceApp.dtos.responses.UpdateNoteResponse;
 import com.myworkspace.notesManagementServiceApp.exceptions.NoteNotFoundException;
 import com.myworkspace.notesManagementServiceApp.exceptions.NullValueException;
-import com.myworkspace.notesManagementServiceApp.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -19,17 +17,10 @@ import java.util.List;
 @Service
 public class NoteServicesImpl implements NoteServices {
     @Autowired
-    private UserServices userServices;
-    @Autowired
     private NoteRepository noteRepository;
 
     @Override
     public CreateNoteResponse createNote(CreateNoteRequest createNoteRequest) {
-        User foundUser = userServices.findUserByUsername(createNoteRequest.getAuthor());
-        if (foundUser == null)
-            throw new UserNotFoundException("User not found");
-        if (!foundUser.isLogged())
-            throw new UserNotFoundException("Login to create note");
         if (createNoteRequest.getTitle().isEmpty())
             throw new NullValueException("Title field can not be empty");
         if (createNoteRequest.getContent().isEmpty())
@@ -54,19 +45,9 @@ public class NoteServicesImpl implements NoteServices {
 
     @Override
     public UpdateNoteResponse updateNote(UpdateNoteRequest updateRequest) {
-        User foundUser = userServices.findUserByUsername(updateRequest.getAuthor());
-        if (foundUser == null) throw new UserNotFoundException("User not found");
         Note foundNote = noteRepository.findNoteByTitle(updateRequest.getTitle());
-//        if (foundNote == null) throw new NoteNotFoundException("Note not found");
-//        if (findNoteByTitle(updateRequest.getOldTitle()) == null)
-//            throw new NullValueException("Title field can not be empty");
-//        if (findNoteByTitle(updateRequest.getNewTitle()) == null)
-//            throw new NullValueException("Title field can not be empty");
-//        if (findNoteByTitle(updateRequest.getNewContent()) == null)
-//            throw new NullValueException("Content field can not be empty");
         foundNote.setTitle(updateRequest.getNewTitle());
         foundNote.setContent(updateRequest.getNewContent());
-        foundNote.setAuthor(foundUser.getUsername());
         noteRepository.save(foundNote);
 
         UpdateNoteResponse updateResponse = new UpdateNoteResponse();
@@ -84,9 +65,6 @@ public class NoteServicesImpl implements NoteServices {
 
     @Override
     public DeleteNoteResponse deleteNote(DeleteNoteRequest deleteNoteRequest) {
-//        if (noteRepository.findNoteByTitle(deleteNoteRequest.getNoteTitle()) != null)
-//            throw new NoteDoesNotExistException("Sorry, note doesn't exist");
-        //Note note = noteRepository.findNoteByTitle(deleteNoteRequest.getNoteTitle());
         Note foundNote = findNoteByTitle(deleteNoteRequest.getTitle());
         if (foundNote == null)
             throw new NoteNotFoundException("Note not found");
