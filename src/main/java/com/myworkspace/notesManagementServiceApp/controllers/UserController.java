@@ -1,5 +1,6 @@
 package com.myworkspace.notesManagementServiceApp.controllers;
 
+import com.myworkspace.notesManagementServiceApp.data.model.Note;
 import com.myworkspace.notesManagementServiceApp.dtos.requests.*;
 import com.myworkspace.notesManagementServiceApp.dtos.responses.*;
 import com.myworkspace.notesManagementServiceApp.exceptions.NoteManagerException;
@@ -8,6 +9,9 @@ import com.myworkspace.notesManagementServiceApp.services.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
 
@@ -43,7 +47,7 @@ public class UserController {
     @PostMapping("/createNote")
     public ResponseEntity<?> createNote(@RequestBody CreateNoteRequest createNoteRequest) {
         try {
-            CreateNoteResponse response = noteServices.createNote(createNoteRequest);
+            CreateNoteResponse response = userServices.createNote(createNoteRequest);
             return new ResponseEntity<>(new APIResponse(true, response), CREATED);
         }
         catch(NoteManagerException e) {
@@ -51,22 +55,42 @@ public class UserController {
         }
     }
     @PatchMapping("/updateNote")
-    public ResponseEntity<?> updateNote(@RequestBody UpdateNoteRequest updateNoteRequest, String name) {
+    public ResponseEntity<?> updateNote(@RequestBody UpdateNoteRequest updateNoteRequest) {
         try {
-            UpdateNoteResponse response = noteServices.updateNote(updateNoteRequest);
+            UpdateNoteResponse response = userServices.updateNote(updateNoteRequest);
             return new ResponseEntity<>(new APIResponse(true, response), CREATED);
         }
         catch(NoteManagerException e) {
             return new ResponseEntity<>(new APIResponse(false, e.getMessage()), BAD_REQUEST);
         }
     }
+    @PostMapping("/shareNote")
+    public ResponseEntity<?> shareNote(@RequestBody ShareNoteRequest shareNoteRequest) {
+        try {
+            ShareNoteResponse response = userServices.shareNote(shareNoteRequest);
+            return new ResponseEntity<>(new APIResponse(true, response), CREATED);
+        }
+        catch (NoteManagerException e) {
+            return new ResponseEntity<>(new APIResponse(false, e.getMessage()), BAD_REQUEST);
+        }
+    }
     @DeleteMapping("/deleteNote")
     public ResponseEntity<?> deleteNote(@RequestBody DeleteNoteRequest deleteNoteRequest) {
         try {
-            DeleteNoteResponse response = noteServices.deleteNote(deleteNoteRequest);
+            DeleteNoteResponse response = userServices.deleteNote(deleteNoteRequest);
             return new ResponseEntity<>(new APIResponse(true, response), CREATED);
         }
         catch(NoteManagerException e) {
+            return new ResponseEntity<>(new APIResponse(false, e.getMessage()), BAD_REQUEST);
+        }
+
+    }
+    @GetMapping("/findAllNote")
+    public ResponseEntity<?> findAllNote() {
+        try {
+            List<Note> notes = noteServices.findAll();
+            return new ResponseEntity<>(new APIResponse(true, notes), CREATED);
+        }catch (NoteManagerException e) {
             return new ResponseEntity<>(new APIResponse(false, e.getMessage()), BAD_REQUEST);
         }
     }
@@ -80,4 +104,5 @@ public class UserController {
             return new ResponseEntity<>(new APIResponse(false, e.getMessage()), BAD_REQUEST);
         }
     }
+
 }

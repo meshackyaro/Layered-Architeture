@@ -1,10 +1,11 @@
 package com.myworkspace.notesManagementServiceApp.dtos.requests;
 
 import lombok.Data;
+
 @Data
-public class UpdateNoteRequest {
-    private String author;
+public class ShareNoteRequest {
     private String title;
-    private String newTitle;
-    private String newContent;
+    private String content;
+    private String author;
+    private String shareTo;
 }

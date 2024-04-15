@@ -24,4 +24,6 @@ public interface UserServices {
     UpdateNoteResponse updateNote(UpdateNoteRequest updateNoteRequest);
 
     DeleteNoteResponse deleteNote(DeleteNoteRequest deleteNoteRequest);
+
+    ShareNoteResponse shareNote(ShareNoteRequest shareNoteRequest);
 }

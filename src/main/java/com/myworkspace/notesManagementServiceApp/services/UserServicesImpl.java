@@ -9,7 +9,6 @@ import com.myworkspace.notesManagementServiceApp.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.security.auth.login.LoginException;
 import java.util.List;
 
 @Service
@@ -27,7 +26,7 @@ public class UserServicesImpl implements UserServices {
     @Override
     public RegistrationResponse register(RegisterUserRequest registerRequest) {
         User user = new User();
-        validateUser(registerRequest);
+        validateUserFor(registerRequest);
         validateUsernameFor(registerRequest);
         validatePasswordFor(registerRequest);
 
@@ -41,7 +40,7 @@ public class UserServicesImpl implements UserServices {
         return registrationResponse;
     }
 
-    private void validateUser(RegisterUserRequest registerRequest) {
+    private void validateUserFor(RegisterUserRequest registerRequest) {
         if (findUserByUsername(registerRequest.getUsername()) != null)
             throw new UserAlreadyExistException("username already exist");
     }
@@ -78,7 +77,7 @@ public class UserServicesImpl implements UserServices {
         userRepository.save(user);
 
         LogoutResponse logoutResponse = new LogoutResponse();
-        logoutResponse.setUsername(logoutResponse.getUsername());
+        logoutResponse.setUsername(logoutRequest.getUsername());
         logoutResponse.setMessage("Logout Successful");
         return logoutResponse;
     }
@@ -100,9 +99,7 @@ public class UserServicesImpl implements UserServices {
         if (!foundUser.isLogged()) throw new LoginUserException("Login to continue");
         CreateNoteResponse response = noteService.createNote(createNoteRequest);
         Note foundNote = noteService.findNoteByTitle(createNoteRequest.getTitle());
-        List<Note> notes =foundUser.getNotes();
-        notes.add(foundNote);
-        foundUser.setNotes(notes);
+        foundUser.getNotes().add(foundNote);
         userRepository.save(foundUser);
         return response;
     }
@@ -129,10 +126,24 @@ public class UserServicesImpl implements UserServices {
         if (!foundUser.isLogged()) throw new LoginUserException("Login to continue");
         DeleteNoteResponse response = noteService.deleteNote(deleteNoteRequest);
         Note foundNote = noteService.findNoteByTitle(deleteNoteRequest.getTitle());
-        List<Note> notes =foundUser.getNotes();
-        notes.remove(foundNote);
+        foundUser.getNotes().remove(foundNote);
         return response;
     }
 
+    @Override
+    public ShareNoteResponse shareNote(ShareNoteRequest shareNoteRequest) {
+        User sender = userRepository.findByUsername(shareNoteRequest.getAuthor());
+        User recipient = userRepository.findByUsername(shareNoteRequest.getAuthor());
+
+        if (sender == null || recipient == null) throw new UserNotFoundException("User not found");
+        if (!sender.isLogged() || !recipient.isLogged()) throw new LoginUserException("Login to continue");
+
+        ShareNoteResponse response = noteService.shareNote(shareNoteRequest);
+        Note foundNote = noteService.findNoteByTitle(shareNoteRequest.getTitle());
+        recipient.getNotes().add(foundNote);
+
+        userRepository.save(recipient);
+        return response;
+    }
 
 }
