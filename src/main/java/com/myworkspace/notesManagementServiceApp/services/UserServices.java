@@ -1,5 +1,6 @@
 package com.myworkspace.notesManagementServiceApp.services;
 
+import com.myworkspace.notesManagementServiceApp.data.model.Note;
 import com.myworkspace.notesManagementServiceApp.data.model.User;
 import com.myworkspace.notesManagementServiceApp.dtos.requests.*;
 import com.myworkspace.notesManagementServiceApp.dtos.responses.*;
@@ -19,6 +20,8 @@ public interface UserServices {
 
     User findUserByUsername(String username);
 
+//    List<Note> findAllNotesFor(String username);
+
     CreateNoteResponse createNote(CreateNoteRequest createNoteRequest);
 
     UpdateNoteResponse updateNote(UpdateNoteRequest updateNoteRequest);
@@ -26,4 +29,6 @@ public interface UserServices {
     DeleteNoteResponse deleteNote(DeleteNoteRequest deleteNoteRequest);
 
     ShareNoteResponse shareNote(ShareNoteRequest shareNoteRequest);
+
+    List<Note> findByUser(String username);
 }

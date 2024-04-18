@@ -12,5 +12,5 @@ public class Note {
     private String title;
     private String content;
     private String Author;
-    private LocalDate dateCreated;
+    private LocalDate dateCreated = LocalDate.now();
 }

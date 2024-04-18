@@ -16,7 +16,7 @@ public class User {
     private String username;
     private String password;
     private boolean isLogged;
-    private LocalDateTime dateCreated;
+    private LocalDateTime dateCreated = LocalDateTime.now();
     @DBRef
     private List<Note> notes = new ArrayList<>();
 }

@@ -8,7 +8,6 @@ import com.myworkspace.notesManagementServiceApp.dtos.responses.*;
 import com.myworkspace.notesManagementServiceApp.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -30,54 +29,55 @@ public class UserServicesImpl implements UserServices {
         validateUsernameFor(registerRequest);
         validatePasswordFor(registerRequest);
 
-        user.setUsername(registerRequest.getUsername());
+        user.setUsername(registerRequest.getUsername().toLowerCase());
         user.setPassword(registerRequest.getPassword());
         userRepository.save(user);
 
         RegistrationResponse registrationResponse = new RegistrationResponse();
-        registrationResponse.setUsername(registerRequest.getUsername());
+        registrationResponse.setUsername(registerRequest.getUsername().toLowerCase());
         registrationResponse.setMessage("Registration Successful");
         return registrationResponse;
     }
 
     private void validateUserFor(RegisterUserRequest registerRequest) {
-        if (findUserByUsername(registerRequest.getUsername()) != null)
+        if (findUserByUsername(registerRequest.getUsername().toLowerCase()) != null)
             throw new UserAlreadyExistException("username already exist");
     }
 
     private static void validatePasswordFor(RegisterUserRequest registerRequest) {
         if (registerRequest.getPassword().matches("[a-zA-Z0-9]+]"))
-            throw new InvalidPasswordException("Incorrect password format. Use uppercase, lowercase letters and/or digits only");
+            throw new InvalidPasswordException("Incorrect username or password format");
     }
 
     private static void validateUsernameFor(RegisterUserRequest registerRequest) {
-        if (registerRequest.getUsername().matches("[a-zA-Z0-9]+]"))
-            throw new InvalidUsernameException("Incorrect username format. Use uppercase, lowercase and/or digits only.");
+        if (registerRequest.getUsername().toLowerCase().matches("[a-zA-Z0-9]+]"))
+            throw new InvalidUsernameException("Incorrect username or password format");
     }
 
     @Override
     public LoginResponse login(LoginUserRequest loginRequest) {
-        User foundUser = findUserByUsername(loginRequest.getUsername());
+        User foundUser = findUserByUsername(loginRequest.getUsername().toLowerCase());
         if (foundUser == null)
             throw new UserNotFoundException("User not found");
+        if (!foundUser.getPassword().equals(loginRequest.getPassword())) throw new InvalidPasswordException("Incorrect username or password");
 
         foundUser.setLogged(true);
         userRepository.save(foundUser);
 
         LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setUsername(loginRequest.getUsername());
+        loginResponse.setUsername(loginRequest.getUsername().toLowerCase());
         loginResponse.setMessage("Login Successful");
         return loginResponse;
     }
 
     @Override
     public LogoutResponse logout(LogoutUserRequest logoutRequest) {
-        User user = findUserByUsername(logoutRequest.getUsername());
+        User user = findUserByUsername(logoutRequest.getUsername().toLowerCase());
         user.setLogged(false);
         userRepository.save(user);
 
         LogoutResponse logoutResponse = new LogoutResponse();
-        logoutResponse.setUsername(logoutRequest.getUsername());
+        logoutResponse.setUsername(logoutRequest.getUsername().toLowerCase());
         logoutResponse.setMessage("Logout Successful");
         return logoutResponse;
     }
@@ -92,13 +92,18 @@ public class UserServicesImpl implements UserServices {
         return userRepository.findByUsername(username);
     }
 
+//    @Override
+//    public List<Note> findAllNotesFor(String username) {
+//        return noteService.findAllNotesFor(username);
+//    }
+
     @Override
     public CreateNoteResponse createNote(CreateNoteRequest createNoteRequest) {
-        User foundUser = userRepository.findByUsername(createNoteRequest.getAuthor());
+        User foundUser = userRepository.findByUsername(createNoteRequest.getAuthor().toLowerCase());
         if (foundUser == null) throw new UserNotFoundException("User not found");
         if (!foundUser.isLogged()) throw new LoginUserException("Login to continue");
         CreateNoteResponse response = noteService.createNote(createNoteRequest);
-        Note foundNote = noteService.findNoteByTitle(createNoteRequest.getTitle());
+        Note foundNote = noteService.findNoteById(response.getId());
         foundUser.getNotes().add(foundNote);
         userRepository.save(foundUser);
         return response;
@@ -106,13 +111,13 @@ public class UserServicesImpl implements UserServices {
 
     @Override
     public UpdateNoteResponse updateNote(UpdateNoteRequest updateNoteRequest) {
-        User foundUser = userRepository.findByUsername(updateNoteRequest.getAuthor());
+        User foundUser = userRepository.findByUsername(updateNoteRequest.getAuthor().toLowerCase());
         if (foundUser == null) throw new UserNotFoundException("User not found");
         if (!foundUser.isLogged()) throw new LoginUserException("Login to continue");
         UpdateNoteResponse response = noteService.updateNote(updateNoteRequest);
-        Note foundNote = noteService.findNoteByTitle(updateNoteRequest.getTitle());
+        Note foundNote = noteService.findNoteById(updateNoteRequest.getId());
         List<Note> notes =foundUser.getNotes();
-        notes.removeIf(note -> note.getTitle().equals(updateNoteRequest.getTitle()));
+        notes.removeIf(note -> note.getId().equals(updateNoteRequest.getId()));
         notes.add(foundNote);
         foundUser.setNotes(notes);
         userRepository.save(foundUser);
@@ -121,29 +126,34 @@ public class UserServicesImpl implements UserServices {
 
     @Override
     public DeleteNoteResponse deleteNote(DeleteNoteRequest deleteNoteRequest) {
-        User foundUser = userRepository.findByUsername(deleteNoteRequest.getAuthor());
+        User foundUser = userRepository.findByUsername(deleteNoteRequest.getAuthor().toLowerCase());
         if (foundUser == null) throw new UserNotFoundException("User not found");
         if (!foundUser.isLogged()) throw new LoginUserException("Login to continue");
         DeleteNoteResponse response = noteService.deleteNote(deleteNoteRequest);
-        Note foundNote = noteService.findNoteByTitle(deleteNoteRequest.getTitle());
+        Note foundNote = noteService.findNoteById(deleteNoteRequest.getId());
         foundUser.getNotes().remove(foundNote);
         return response;
     }
 
     @Override
     public ShareNoteResponse shareNote(ShareNoteRequest shareNoteRequest) {
-        User sender = userRepository.findByUsername(shareNoteRequest.getAuthor());
-        User recipient = userRepository.findByUsername(shareNoteRequest.getAuthor());
+        User sender = userRepository.findByUsername(shareNoteRequest.getAuthor().toLowerCase());
+        User recipient = userRepository.findByUsername(shareNoteRequest.getShareTo().toLowerCase());
 
         if (sender == null || recipient == null) throw new UserNotFoundException("User not found");
         if (!sender.isLogged() || !recipient.isLogged()) throw new LoginUserException("Login to continue");
 
         ShareNoteResponse response = noteService.shareNote(shareNoteRequest);
-        Note foundNote = noteService.findNoteByTitle(shareNoteRequest.getTitle());
+        Note foundNote = noteService.findNoteById(shareNoteRequest.getId());
         recipient.getNotes().add(foundNote);
 
         userRepository.save(recipient);
         return response;
+    }
+
+    @Override
+    public List<Note> findByUser(String username) {
+        return noteService.findByUser(username);
     }
 
 }

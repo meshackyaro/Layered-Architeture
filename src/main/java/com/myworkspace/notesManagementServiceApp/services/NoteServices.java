@@ -16,7 +16,7 @@ public interface NoteServices {
 
     UpdateNoteResponse updateNote(UpdateNoteRequest updateNoteRequest);
 
-    Note findNoteByTitle(String title);
+    Note findNoteById(String title);
 
     DeleteNoteResponse deleteNote(DeleteNoteRequest deleteNote);
 
@@ -25,4 +25,6 @@ public interface NoteServices {
     List<Note> findAll();
 
     ShareNoteResponse shareNote(ShareNoteRequest shareNoteRequest);
+
+    List<Note> findByUser(String username);
 }

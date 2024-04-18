@@ -7,7 +7,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 @Repository
 public interface NoteRepository extends MongoRepository<Note, String> {
-    Note findNoteByTitle(String title);
+    Note findNoteById(String id);
 
     List<Note> findNoteByAuthor(String author);
+
+//    List<Note> findAllNotesFor(String username);
 }

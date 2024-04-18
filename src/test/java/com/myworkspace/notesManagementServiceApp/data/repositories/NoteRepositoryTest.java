@@ -15,9 +15,10 @@ public class NoteRepositoryTest {
     public void noteRepositoryTest() {
         noteRepository.deleteAll();
         Note note = new Note();
-        noteRepository.save(note);
+        note = noteRepository.save(note);
         int currentNotes = noteRepository.findAll().size();
         assertEquals(currentNotes, noteRepository.count());
+        assertEquals(note,noteRepository.findNoteById(note.getId()));
     }
 
 }

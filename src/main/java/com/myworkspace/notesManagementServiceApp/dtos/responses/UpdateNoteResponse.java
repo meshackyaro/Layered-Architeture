@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class UpdateNoteResponse {
+    private String id;
     private String author;
     private String newTitle;
     private String newContent;

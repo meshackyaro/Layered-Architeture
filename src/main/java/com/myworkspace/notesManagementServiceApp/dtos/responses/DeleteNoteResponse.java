@@ -4,7 +4,5 @@ import lombok.Data;
 
 @Data
 public class DeleteNoteResponse {
-    private String author;
-    private String title;
     private String message;
 }

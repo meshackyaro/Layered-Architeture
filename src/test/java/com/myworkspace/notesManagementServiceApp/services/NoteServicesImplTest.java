@@ -49,7 +49,7 @@ public class NoteServicesImplTest {
         CreateNoteResponse response1 = noteServices.createNote(createNoteRequest);
         long currentNote = noteServices.findAll().size();
         assertEquals(currentNote, noteServices.count());
-        Note foundNote = noteServices.findNoteByTitle("Title");
+        Note foundNote = noteServices.findNoteById(response1.getId());
         assertEquals("Title", foundNote.getTitle());
     }
     @Test
@@ -61,7 +61,7 @@ public class NoteServicesImplTest {
         registerUserRequest.setPassword("password765");
         RegistrationResponse response = userServices.register(registerUserRequest);
         long currentlyRegistered = userServices.findAll().size();
-        assertEquals(currentlyRegistered, userServices.getNumberOfUsers());
+        assertEquals(1, userServices.getNumberOfUsers());
 
         LoginUserRequest loginRequest = new LoginUserRequest();
         loginRequest.setUsername(registerUserRequest.getUsername());
@@ -77,14 +77,14 @@ public class NoteServicesImplTest {
         CreateNoteResponse response1 = noteServices.createNote(createNoteRequest);
         long currentNote = noteServices.findAll().size();
         assertEquals(currentNote, noteServices.count());
-        Note foundNote = noteServices.findNoteByTitle("Title");
+        Note foundNote = noteServices.findNoteById(response1.getId());
         System.out.println(response1);
 
         assertEquals("Title", foundNote.getTitle());
 
         UpdateNoteRequest updateNoteRequest = new UpdateNoteRequest();
         updateNoteRequest.setAuthor(createNoteRequest.getAuthor());
-        updateNoteRequest.setTitle(createNoteRequest.getTitle());
+        updateNoteRequest.setId(response1.getId());
         updateNoteRequest.setNewTitle("New Title");
         updateNoteRequest.setNewContent("New Body");
 
@@ -122,7 +122,7 @@ public class NoteServicesImplTest {
         CreateNoteResponse response1 = noteServices.createNote(createNoteRequest);
         long currentNote = noteServices.findAll().size();
         assertEquals(currentNote, noteServices.count());
-        Note foundNote = noteRepository.findNoteByTitle("Title");
+        Note foundNote = noteRepository.findNoteById("Title");
         assertEquals("Title", foundNote.getTitle());
 
         DeleteNoteRequest deleteNote = new DeleteNoteRequest();
@@ -194,7 +194,7 @@ public class NoteServicesImplTest {
         CreateNoteResponse response2 = noteServices.createNote(createNoteRequest);
         long currentNote = noteServices.findAll().size();
         assertEquals(currentNote, noteServices.count());
-        Note foundNote = noteServices.findNoteByTitle("Title");
+        Note foundNote = noteServices.findNoteById("Title");
         assertEquals("Title", foundNote.getTitle());
 
         ShareNoteRequest shareNoteRequest = new ShareNoteRequest();
@@ -205,7 +205,7 @@ public class NoteServicesImplTest {
         ShareNoteResponse response3 = noteServices.shareNote(shareNoteRequest);
         long currentNotes = noteServices.findAll().size();
         assertEquals(currentNotes, noteServices.count());
-        foundNote = noteServices.findNoteByTitle("Title");
+        foundNote = noteServices.findNoteById("Title");
         assertEquals("Title", foundNote.getTitle());
     }
 

@@ -32,12 +32,13 @@ public class NoteServicesImpl implements NoteServices {
         note.setTitle(createNoteRequest.getTitle());
         note.setContent(createNoteRequest.getContent());
         note.setAuthor(createNoteRequest.getAuthor());
-        noteRepository.save(note);
+        note = noteRepository.save(note);
 
         CreateNoteResponse createNoteResponse = new CreateNoteResponse();
-        createNoteResponse.setTitle(createNoteRequest.getTitle());
-        createNoteResponse.setContent(createNoteRequest.getContent());
-        createNoteResponse.setAuthor(createNoteRequest.getAuthor());
+        createNoteResponse.setId(note.getId());
+        createNoteResponse.setTitle(note.getTitle());
+        createNoteResponse.setContent(note.getContent());
+        createNoteResponse.setAuthor(note.getAuthor());
         createNoteResponse.setMessage("Note Created Successfully");
         return createNoteResponse;
 
@@ -60,35 +61,36 @@ public class NoteServicesImpl implements NoteServices {
 
     @Override
     public UpdateNoteResponse updateNote(UpdateNoteRequest updateRequest) {
-        Note foundNote = noteRepository.findNoteByTitle(updateRequest.getTitle());
-        foundNote.setTitle(updateRequest.getNewTitle());
-        foundNote.setContent(updateRequest.getNewContent());
+        Note foundNote = noteRepository.findNoteById(updateRequest.getId());
+        foundNote.setTitle(updateRequest.getTitle());
+        foundNote.setContent(updateRequest.getContent());
         foundNote.setAuthor(updateRequest.getAuthor());
         noteRepository.save(foundNote);
 
         UpdateNoteResponse updateResponse = new UpdateNoteResponse();
-        updateResponse.setNewTitle(updateRequest.getNewTitle());
-        updateResponse.setNewContent(updateRequest.getNewContent());
+        updateResponse.setNewTitle(updateRequest.getTitle());
+        updateResponse.setNewContent(updateRequest.getContent());
         updateResponse.setAuthor(updateRequest.getAuthor());
+        updateResponse.setId(updateRequest.getId());
         updateResponse.setMessage("Note updated");
         return updateResponse;
     }
 
     @Override
-    public Note findNoteByTitle(String title) {
-        return noteRepository.findNoteByTitle(title);
+    public Note findNoteById(String title) {
+        return noteRepository.findNoteById(title);
     }
 
     @Override
     public DeleteNoteResponse deleteNote(DeleteNoteRequest deleteNoteRequest) {
-        Note foundNote = findNoteByTitle(deleteNoteRequest.getTitle());
+        Note foundNote = findNoteById(deleteNoteRequest.getId());
         if (foundNote == null)
             throw new NoteNotFoundException("Note not found");
         noteRepository.delete(foundNote);
 
         DeleteNoteResponse deleteResponse = new DeleteNoteResponse();
-        deleteResponse.setAuthor(deleteNoteRequest.getAuthor());
-        deleteResponse.setTitle(deleteNoteRequest.getTitle());
+//        deleteResponse.setId(deleteResponse.getId());
+//        deleteResponse.setAuthor(deleteNoteRequest.getAuthor());
         deleteResponse.setMessage("Deleted");
         return deleteResponse;
     }
@@ -105,7 +107,7 @@ public class NoteServicesImpl implements NoteServices {
 
     @Override
     public ShareNoteResponse shareNote(ShareNoteRequest shareNoteRequest) {
-        Note foundNote = findNoteByTitle(shareNoteRequest.getTitle());
+        Note foundNote = findNoteById(shareNoteRequest.getTitle());
 
         if (foundNote == null) throw new NoteNotFoundException("Note not found");
 
@@ -122,5 +124,15 @@ public class NoteServicesImpl implements NoteServices {
         shareNoteResponse.setMessage("Note shared successfully");
         return shareNoteResponse;
     }
+
+    @Override
+    public List<Note> findByUser(String username) {
+        return noteRepository.findNoteByAuthor(username);
+    }
+
+//    @Override
+//    public List<Note> findAllNotesFor(String username) {
+//        return noteRepository.findNoteByAuthor(username);
+//    }
 
 }
