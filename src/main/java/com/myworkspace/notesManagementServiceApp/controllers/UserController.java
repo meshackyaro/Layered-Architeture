@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
 
@@ -100,6 +99,37 @@ public class UserController {
             return new ResponseEntity<>(new APIResponse(true, response), CREATED);
         }
         catch(NoteManagerException e) {
+            return new ResponseEntity<>(new APIResponse(false, e.getMessage()), BAD_REQUEST);
+        }
+    }
+    @GetMapping("/findAllNotesForAUser")
+    public ResponseEntity<?> findNoteByUser(@RequestBody FindAllNotesForAUserRequest getNoteRequest) {
+        try {
+            List<Note> userNotes = userServices.findNoteByUser(getNoteRequest.getUsername());
+            return new ResponseEntity<>(new APIResponse(true, userNotes), CREATED);
+        }
+        catch (NoteManagerException e) {
+            return new ResponseEntity<>(new APIResponse( false, e.getMessage()), BAD_REQUEST);
+        }
+
+    }
+    @GetMapping("/findNoteByUser")
+    public ResponseEntity<?> findNoteByUser(@RequestBody FindNoteByUserRequest findNoteRequest) {
+        try {
+            Note note = noteServices.findNoteBy(findNoteRequest.getAuthor(), findNoteRequest.getTitle());
+            return new ResponseEntity<>(new APIResponse(true, note), CREATED);
+        }
+        catch (NoteManagerException e) {
+            return new ResponseEntity<>(new APIResponse(false, e.getMessage()), BAD_REQUEST);
+        }
+    }
+    @GetMapping("/findNoteByContent")
+    public ResponseEntity<?> findNoteByContent(@RequestBody FindNoteByContentRequest findNoteRequest) {
+        try {
+            Note note = noteServices.findNoteByContent(findNoteRequest.getAuthor(), findNoteRequest.getContent());
+            return new ResponseEntity<>(new APIResponse(true, note), CREATED);
+        }
+        catch (NoteManagerException e) {
             return new ResponseEntity<>(new APIResponse(false, e.getMessage()), BAD_REQUEST);
         }
     }

@@ -85,8 +85,8 @@ public class NoteServicesImplTest {
         UpdateNoteRequest updateNoteRequest = new UpdateNoteRequest();
         updateNoteRequest.setAuthor(createNoteRequest.getAuthor());
         updateNoteRequest.setId(response1.getId());
-        updateNoteRequest.setNewTitle("New Title");
-        updateNoteRequest.setNewContent("New Body");
+        updateNoteRequest.setTitle("New Title");
+        updateNoteRequest.setContent("New Content");
 
 //        createNoteRequest.setTitle(updateNoteRequest.getNewTitle());
 //        createNoteRequest.setContent(updateNoteRequest.getNewContent());
@@ -94,7 +94,7 @@ public class NoteServicesImplTest {
         long currentNotes = noteServices.findAll().size();
         assertEquals(currentNotes, noteServices.count());
         assertEquals("New Title", response2.getNewTitle());
-        assertEquals("New Body", response2.getNewContent());
+        assertEquals("New Content", response2.getNewContent());
         System.out.println(response2);
     }
     @Test
@@ -122,10 +122,11 @@ public class NoteServicesImplTest {
         CreateNoteResponse response1 = noteServices.createNote(createNoteRequest);
         long currentNote = noteServices.findAll().size();
         assertEquals(currentNote, noteServices.count());
-        Note foundNote = noteRepository.findNoteById("Title");
+        Note foundNote = noteRepository.findNoteById(response1.getId());
         assertEquals("Title", foundNote.getTitle());
 
         DeleteNoteRequest deleteNote = new DeleteNoteRequest();
+        deleteNote.setId(response1.getId());
         deleteNote.setTitle("Title");
         deleteNote.setAuthor(createNoteRequest.getAuthor());
         DeleteNoteResponse response2 = noteServices.deleteNote(deleteNote);
@@ -199,12 +200,14 @@ public class NoteServicesImplTest {
 
         ShareNoteRequest shareNoteRequest = new ShareNoteRequest();
         shareNoteRequest.setTitle(createNoteRequest.getTitle());
-        shareNoteRequest.setContent(createNoteRequest.getContent());
+//        shareNoteRequest.setContent(createNoteRequest.getContent());
         shareNoteRequest.setAuthor(loginRequest.getUsername());
         shareNoteRequest.setShareTo(loginRequest1.getUsername());
-        ShareNoteResponse response3 = noteServices.shareNote(shareNoteRequest);
+        ShareNoteResponse response3 = userServices.shareNote(shareNoteRequest);
+
         long currentNotes = noteServices.findAll().size();
         assertEquals(currentNotes, noteServices.count());
+
         foundNote = noteServices.findNoteById("Title");
         assertEquals("Title", foundNote.getTitle());
     }

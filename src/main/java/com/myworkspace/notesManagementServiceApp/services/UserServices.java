@@ -30,5 +30,5 @@ public interface UserServices {
 
     ShareNoteResponse shareNote(ShareNoteRequest shareNoteRequest);
 
-    List<Note> findByUser(String username);
+    List<Note> findNoteByUser(String username);
 }

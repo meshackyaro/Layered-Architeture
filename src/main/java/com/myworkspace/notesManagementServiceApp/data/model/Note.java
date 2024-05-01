@@ -11,6 +11,6 @@ public class Note {
     private String id;
     private String title;
     private String content;
-    private String Author;
+    private String author;
     private LocalDate dateCreated = LocalDate.now();
 }

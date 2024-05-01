@@ -2,6 +2,7 @@ package com.myworkspace.notesManagementServiceApp.services;
 
 import com.myworkspace.notesManagementServiceApp.data.model.Note;
 import com.myworkspace.notesManagementServiceApp.data.repositories.NoteRepository;
+import com.myworkspace.notesManagementServiceApp.data.repositories.UserRepository;
 import com.myworkspace.notesManagementServiceApp.dtos.requests.CreateNoteRequest;
 import com.myworkspace.notesManagementServiceApp.dtos.requests.DeleteNoteRequest;
 import com.myworkspace.notesManagementServiceApp.dtos.requests.ShareNoteRequest;
@@ -20,6 +21,8 @@ import java.util.List;
 public class NoteServicesImpl implements NoteServices {
     @Autowired
     private NoteRepository noteRepository;
+//    @Autowired
+//    private UserRepository userRepository;
 
 
     @Override
@@ -107,27 +110,71 @@ public class NoteServicesImpl implements NoteServices {
 
     @Override
     public ShareNoteResponse shareNote(ShareNoteRequest shareNoteRequest) {
-        Note foundNote = findNoteById(shareNoteRequest.getTitle());
-
-        if (foundNote == null) throw new NoteNotFoundException("Note not found");
 
         Note sharedNote = new Note();
-        sharedNote.setAuthor(foundNote.getAuthor());
-        sharedNote.setTitle(shareNoteRequest.getTitle());
+        Note foundNote = noteRepository.findNoteBy(shareNoteRequest.getAuthor(), shareNoteRequest.getTitle());
+        sharedNote.setTitle(foundNote.getTitle());
         sharedNote.setContent(foundNote.getContent());
-        Note savedNote = noteRepository.save(sharedNote);
+//        sharedNote.setAuthor(foundReceiver.getUsername());
 
-        ShareNoteResponse shareNoteResponse = new ShareNoteResponse();
-        shareNoteResponse.setAuthor(savedNote.getAuthor());
-        shareNoteResponse.setTitle(savedNote.getTitle());
-        shareNoteResponse.setContent(savedNote.getContent());
-        shareNoteResponse.setMessage("Note shared successfully");
-        return shareNoteResponse;
+        ShareNoteResponse response = new ShareNoteResponse();
+        response.setTitle(sharedNote.getTitle());
+        response.setContent(sharedNote.getContent());
+        response.setAuthor(sharedNote.getAuthor());
+        response.setActive(true);
+        response.setMessage("Share Successful");
+
+        return response;
+
+//        Note foundNote = findNoteById(shareNoteRequest.getTitle());
+//        ShareNoteResponse response = new ShareNoteResponse();
+//
+//        Note foundNote = noteRepository.finsNoteBy(shareNoteRequest.getAuthor(), shareNoteRequest.getTitle());
+//        if (foundNote == null) {
+//            response.setActive(false);
+//            response.setMessage("Note not found");
+//        }
+//
+//        User foundReceiver = userRepository.findByUsername(shareNoteRequest.getShareTo());
+//        if (foundReceiver == null) {
+//            response.setActive(false);
+//            response.setMessage("Receiver not found");
+//        }
+////        if (foundNote == null) throw new NoteNotFoundException("Note not found");
+//
+//        Note sharedNote = new Note();
+//        sharedNote.setAuthor(foundNote.getAuthor());
+//        sharedNote.setTitle(shareNoteRequest.getTitle());
+//        sharedNote.setContent(foundNote.getContent());
+//        Note savedNote = noteRepository.save(sharedNote);
+//
+//        ShareNoteResponse shareNoteResponse = new ShareNoteResponse();
+//        shareNoteResponse.setAuthor(savedNote.getAuthor());
+//        shareNoteResponse.setTitle(savedNote.getTitle());
+//        shareNoteResponse.setContent(savedNote.getContent());
+//        shareNoteResponse.setMessage("Note shared successfully");
+//        return response;
     }
 
     @Override
-    public List<Note> findByUser(String username) {
-        return noteRepository.findNoteByAuthor(username);
+    public List<Note> findNoteByUser(String username) {
+        List<Note> notes = noteRepository.findNoteByAuthor(username);
+        if (notes == null) throw new NoteNotFoundException("Notes not found");
+        return notes;
+    }
+
+    @Override
+    public Note findNoteBy(String author, String title) {
+        Note note = noteRepository.findNoteBy(author, title);
+        if (note == null) throw new NoteNotFoundException("Note not found");
+        return note;
+    }
+
+    @Override
+    public Note findNoteByContent(String author, String content) {
+        Note foundNote = noteRepository.findNoteBy(author, content);
+        if (foundNote == null) throw new NoteNotFoundException("Note not found");
+        return foundNote;
     }
 
 //    @Override

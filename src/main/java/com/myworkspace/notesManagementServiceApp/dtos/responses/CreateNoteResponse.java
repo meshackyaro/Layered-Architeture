@@ -1,6 +1,7 @@
 package com.myworkspace.notesManagementServiceApp.dtos.responses;
 
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 
 @Data
 public class CreateNoteResponse {

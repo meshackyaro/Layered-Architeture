@@ -8,4 +8,5 @@ public class ShareNoteResponse {
     private String content;
     private String author;
     private String message;
+    private boolean isActive;
 }
