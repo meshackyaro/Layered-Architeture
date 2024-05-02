@@ -62,16 +62,16 @@ public class UserController {
             return new ResponseEntity<>(new APIResponse(false, e.getMessage()), BAD_REQUEST);
         }
     }
-    @PostMapping("/shareNote")
-    public ResponseEntity<?> shareNote(@RequestBody ShareNoteRequest shareNoteRequest) {
-        try {
-            ShareNoteResponse response = userServices.shareNote(shareNoteRequest);
-            return new ResponseEntity<>(new APIResponse(true, response), CREATED);
-        }
-        catch (NoteManagerException e) {
-            return new ResponseEntity<>(new APIResponse(false, e.getMessage()), BAD_REQUEST);
-        }
-    }
+//    @PostMapping("/shareNote")
+//    public ResponseEntity<?> shareNote(@RequestBody ShareNoteRequest shareNoteRequest) {
+//        try {
+//            ShareNoteResponse response = userServices.shareNote(shareNoteRequest);
+//            return new ResponseEntity<>(new APIResponse(true, response), CREATED);
+//        }
+//        catch (NoteManagerException e) {
+//            return new ResponseEntity<>(new APIResponse(false, e.getMessage()), BAD_REQUEST);
+//        }
+//    }
     @DeleteMapping("/deleteNote")
     public ResponseEntity<?> deleteNote(@RequestBody DeleteNoteRequest deleteNoteRequest) {
         try {
@@ -103,7 +103,7 @@ public class UserController {
         }
     }
     @GetMapping("/findAllNotesForAUser")
-    public ResponseEntity<?> findNoteByUser(@RequestBody FindAllNotesForAUserRequest getNoteRequest) {
+    public ResponseEntity<?> findNotesByUser(@RequestBody FindAllNotesForAUserRequest getNoteRequest) {
         try {
             List<Note> userNotes = userServices.findNoteByUser(getNoteRequest.getUsername());
             return new ResponseEntity<>(new APIResponse(true, userNotes), CREATED);
@@ -111,27 +111,29 @@ public class UserController {
         catch (NoteManagerException e) {
             return new ResponseEntity<>(new APIResponse( false, e.getMessage()), BAD_REQUEST);
         }
-
     }
-    @GetMapping("/findNoteByUser")
+
+    @GetMapping("/findNoteByAuthorAndTitle")
     public ResponseEntity<?> findNoteByUser(@RequestBody FindNoteByUserRequest findNoteRequest) {
         try {
-            Note note = noteServices.findNoteBy(findNoteRequest.getAuthor(), findNoteRequest.getTitle());
-            return new ResponseEntity<>(new APIResponse(true, note), CREATED);
+            List<Note> notes = noteServices.findNoteByAuthorAndTitle(findNoteRequest.getAuthor(), findNoteRequest.getTitle());
+            return new ResponseEntity<>(new APIResponse(true, notes), CREATED);
         }
         catch (NoteManagerException e) {
             return new ResponseEntity<>(new APIResponse(false, e.getMessage()), BAD_REQUEST);
         }
     }
-    @GetMapping("/findNoteByContent")
-    public ResponseEntity<?> findNoteByContent(@RequestBody FindNoteByContentRequest findNoteRequest) {
-        try {
-            Note note = noteServices.findNoteByContent(findNoteRequest.getAuthor(), findNoteRequest.getContent());
-            return new ResponseEntity<>(new APIResponse(true, note), CREATED);
-        }
-        catch (NoteManagerException e) {
-            return new ResponseEntity<>(new APIResponse(false, e.getMessage()), BAD_REQUEST);
-        }
-    }
+
+
+//    @GetMapping("/findNoteByContent")
+//    public ResponseEntity<?> findNoteByContent(@RequestBody FindNoteByContentRequest findNoteRequest) {
+//        try {
+//            Note note = noteServices.findNoteByContent(findNoteRequest.getAuthor(), findNoteRequest.getContent());
+//            return new ResponseEntity<>(new APIResponse(true, note), CREATED);
+//        }
+//        catch (NoteManagerException e) {
+//            return new ResponseEntity<>(new APIResponse(false, e.getMessage()), BAD_REQUEST);
+//        }
+//    }
 
 }

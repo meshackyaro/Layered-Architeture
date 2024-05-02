@@ -20,15 +20,17 @@ public interface UserServices {
 
     User findUserByUsername(String username);
 
-//    List<Note> findAllNotesFor(String username);
-
     CreateNoteResponse createNote(CreateNoteRequest createNoteRequest);
 
     UpdateNoteResponse updateNote(UpdateNoteRequest updateNoteRequest);
 
     DeleteNoteResponse deleteNote(DeleteNoteRequest deleteNoteRequest);
 
-    ShareNoteResponse shareNote(ShareNoteRequest shareNoteRequest);
+//    ShareNoteResponse shareNote(ShareNoteRequest shareNoteRequest);
 
     List<Note> findNoteByUser(String username);
+
+    List<Note> findNoteByAuthorAndTitle(String author, String title);
+
+//   Note findNoteBy(String author, String title);
 }

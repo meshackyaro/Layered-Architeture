@@ -102,6 +102,7 @@ public class UserServicesImpl implements UserServices {
         User foundUser = userRepository.findByUsername(createNoteRequest.getAuthor().toLowerCase());
         if (foundUser == null) throw new UserNotFoundException("User not found");
         if (!foundUser.isLogged()) throw new LoginUserException("Login to continue");
+
         CreateNoteResponse response = noteService.createNote(createNoteRequest);
         Note foundNote = noteService.findNoteById(response.getId());
         foundUser.getNotes().add(foundNote);
@@ -114,6 +115,7 @@ public class UserServicesImpl implements UserServices {
         User foundUser = userRepository.findByUsername(updateNoteRequest.getAuthor().toLowerCase());
         if (foundUser == null) throw new UserNotFoundException("User not found");
         if (!foundUser.isLogged()) throw new LoginUserException("Login to continue");
+
         UpdateNoteResponse response = noteService.updateNote(updateNoteRequest);
         Note foundNote = noteService.findNoteById(updateNoteRequest.getId());
         List<Note> notes = foundUser.getNotes();
@@ -129,50 +131,64 @@ public class UserServicesImpl implements UserServices {
         User foundUser = userRepository.findByUsername(deleteNoteRequest.getAuthor().toLowerCase());
         if (foundUser == null) throw new UserNotFoundException("User not found");
         if (!foundUser.isLogged()) throw new LoginUserException("Login to continue");
+
         DeleteNoteResponse response = noteService.deleteNote(deleteNoteRequest);
         Note foundNote = noteService.findNoteById(deleteNoteRequest.getId());
         foundUser.getNotes().remove(foundNote);
         return response;
     }
 
-    @Override
-    public ShareNoteResponse shareNote(ShareNoteRequest shareNoteRequest) {
+//    @Override
+//    public ShareNoteResponse shareNote(ShareNoteRequest shareNoteRequest) {
+//
+//        ShareNoteResponse response = new ShareNoteResponse();
 
-        ShareNoteResponse response = new ShareNoteResponse();
+//        Note foundNote = noteService.findNoteBy(shareNoteRequest.getAuthor(), shareNoteRequest.getTitle());
+//
+//        User foundReceiver = userRepository.findByUsername(shareNoteRequest.getShareTo());
+//        if (foundReceiver == null) {
+//            response.setActive(false);
+//            response.setMessage("Receiver not found");
+//        }
 
-        Note foundNote = noteService.findNoteBy(shareNoteRequest.getAuthor(), shareNoteRequest.getTitle());
-
-        User foundReceiver = userRepository.findByUsername(shareNoteRequest.getShareTo());
-        if (foundReceiver == null) {
-            response.setActive(false);
-            response.setMessage("Receiver not found");
-        }
-
-        Note sharedNote = new Note();
-        sharedNote.setTitle(foundNote.getTitle());
-        sharedNote.setContent(foundNote.getContent());
-        sharedNote.setAuthor(foundReceiver.getUsername());
-
-        response.setTitle(sharedNote.getTitle());
-        response.setContent(sharedNote.getContent());
-        response.setAuthor(sharedNote.getAuthor());
-        response.setActive(true);
-        response.setMessage("Share Successful");
-
-        return response;
-    }
+//        Note sharedNote = new Note();
+//        sharedNote.setTitle(foundNote.getTitle());
+//        sharedNote.setContent(foundNote.getContent());
+//        sharedNote.setAuthor(foundReceiver.getUsername().toLowerCase());
+//
+//        response.setTitle(sharedNote.getTitle());
+//        response.setContent(sharedNote.getContent());
+//        response.setAuthor(sharedNote.getAuthor().toLowerCase());
+//        response.setActive(true);
+//        response.setMessage("Share Successful");
+//
+//        return response;
+//    }
 
     @Override
     public List<Note> findNoteByUser(String username) {
-        User foundUser = userRepository.findByUsername(username);
-//        if (foundUser == null) throw new UserNotFoundException("User not found");
-//        if (!foundUser.isLogged()) throw new LoginUserException("Login to continue");
+        User foundUser = userRepository.findByUsername(username.toLowerCase());
+        if (foundUser == null) throw new UserNotFoundException("User not found");
+        if (!foundUser.isLogged()) throw new LoginUserException("Login to continue");
 
-        List<Note> notes = noteService.findNoteByUser(username);
+        List<Note> notes = noteService.findNotesByUser(username);
         foundUser.getNotes().add(new Note());
         foundUser.setNotes(notes);
         userRepository.save(foundUser);
         return notes;
     }
+
+    @Override
+    public  List<Note> findNoteByAuthorAndTitle(String author, String title) {
+        User user = userRepository.findByUsername(author.toLowerCase());
+        if (user == null) throw new UserNotFoundException("User not found");
+        if (!user.isLogged()) throw new LoginUserException("Login to continue");
+        List<Note> notes = noteService.findNoteByAuthorAndTitle(author,title);
+        if(notes.isEmpty()) throw new NoteNotFoundException("Note not found");
+        user.setNotes(notes);
+        userRepository.save(user);
+        return notes;
+    }
+
 
 }

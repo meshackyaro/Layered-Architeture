@@ -21,9 +21,6 @@ import java.util.List;
 public class NoteServicesImpl implements NoteServices {
     @Autowired
     private NoteRepository noteRepository;
-//    @Autowired
-//    private UserRepository userRepository;
-
 
     @Override
     public CreateNoteResponse createNote(CreateNoteRequest createNoteRequest) {
@@ -112,9 +109,9 @@ public class NoteServicesImpl implements NoteServices {
     public ShareNoteResponse shareNote(ShareNoteRequest shareNoteRequest) {
 
         Note sharedNote = new Note();
-        Note foundNote = noteRepository.findNoteBy(shareNoteRequest.getAuthor(), shareNoteRequest.getTitle());
-        sharedNote.setTitle(foundNote.getTitle());
-        sharedNote.setContent(foundNote.getContent());
+        List<Note> foundNote = noteRepository.findNoteByAuthorAndTitle(shareNoteRequest.getAuthor(), shareNoteRequest.getTitle());
+//        sharedNote.setTitle(foundNote.getTitle());
+//        sharedNote.setContent(foundNote.getContent());
 //        sharedNote.setAuthor(foundReceiver.getUsername());
 
         ShareNoteResponse response = new ShareNoteResponse();
@@ -157,24 +154,25 @@ public class NoteServicesImpl implements NoteServices {
     }
 
     @Override
-    public List<Note> findNoteByUser(String username) {
+    public List<Note> findNotesByUser(String username) {
         List<Note> notes = noteRepository.findNoteByAuthor(username);
         if (notes == null) throw new NoteNotFoundException("Notes not found");
         return notes;
     }
 
+
     @Override
-    public Note findNoteBy(String author, String title) {
-        Note note = noteRepository.findNoteBy(author, title);
-        if (note == null) throw new NoteNotFoundException("Note not found");
-        return note;
+    public List<Note> findNoteByAuthorAndTitle(String author, String title) {
+        List<Note> notes = noteRepository.findNoteByAuthorAndTitle(author, title);
+        if (notes == null) throw new NoteNotFoundException("Note not found");
+        return notes;
     }
 
     @Override
-    public Note findNoteByContent(String author, String content) {
-        Note foundNote = noteRepository.findNoteBy(author, content);
-        if (foundNote == null) throw new NoteNotFoundException("Note not found");
-        return foundNote;
+    public List<Note> findNoteByContent(String author, String content) {
+        List<Note> foundNotes = noteRepository.findNoteByAuthorAndTitle(author, content);
+        if (foundNotes == null) throw new NoteNotFoundException("Note not found");
+        return foundNotes;
     }
 
 //    @Override

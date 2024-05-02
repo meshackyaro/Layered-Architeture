@@ -26,9 +26,9 @@ public interface NoteServices {
 
     ShareNoteResponse shareNote(ShareNoteRequest shareNoteRequest);
 
-    List<Note> findNoteByUser(String username);
+    List<Note> findNotesByUser(String username);
 
-    Note findNoteBy(String author, String title);
+    List<Note> findNoteByAuthorAndTitle(String author, String title);
 
-    Note findNoteByContent(String author, String content);
+    List<Note> findNoteByContent(String author, String content);
 }
