@@ -1,5 +1,4 @@
 package com.myworkspace.notesManagementServiceApp.services;
-
 import com.myworkspace.notesManagementServiceApp.data.model.Note;
 import com.myworkspace.notesManagementServiceApp.dtos.requests.CreateNoteRequest;
 import com.myworkspace.notesManagementServiceApp.dtos.requests.DeleteNoteRequest;
@@ -30,5 +29,7 @@ public interface NoteServices {
 
     List<Note> findNoteByAuthorAndTitle(String author, String title);
 
-    List<Note> findNoteByContent(String author, String content);
+    List<Note> findNoteByAuthorAndContent(String author, String content);
+
+    List<Note> findNoteByContent(String username, String keyword);
 }

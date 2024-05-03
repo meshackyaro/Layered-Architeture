@@ -183,11 +183,41 @@ public class UserServicesImpl implements UserServices {
         User user = userRepository.findByUsername(author.toLowerCase());
         if (user == null) throw new UserNotFoundException("User not found");
         if (!user.isLogged()) throw new LoginUserException("Login to continue");
+
         List<Note> notes = noteService.findNoteByAuthorAndTitle(author,title);
         if(notes.isEmpty()) throw new NoteNotFoundException("Note not found");
         user.setNotes(notes);
         userRepository.save(user);
         return notes;
+    }
+
+    @Override
+    public List<Note> findNoteByAuthorAndContent(String author, String content) {
+        User user = userRepository.findByUsername(author.toLowerCase());
+        if (user == null) throw new UserNotFoundException("User not found");
+        if (!user.isLogged()) throw new LoginUserException("Login to continue");
+
+        List<Note> notes = noteService.findNoteByAuthorAndContent(author, content);
+        if(notes.isEmpty()) throw new NoteNotFoundException("Note not found");
+        user.setNotes(notes);
+        userRepository.save(user);
+        return notes;
+    }
+
+    @Override
+    public List<Note> findNoteByContent(String username, String content) {
+        User user = userRepository.findByUsername(username.toLowerCase());
+        if (user == null) throw new UserNotFoundException("User not found");
+        if (!user.isLogged()) throw new LoginUserException("Login to continue");
+
+        List<Note> notes = noteService.findNoteByContent(username, content);
+        for (Note word : notes) {
+            if (word.equals(content))
+                    return notes;
+            if(notes.isEmpty()) throw new NoteNotFoundException("Note not found");
+        }
+        return notes;
+
     }
 
 

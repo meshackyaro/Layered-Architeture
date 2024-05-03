@@ -68,6 +68,7 @@ public class UserServicesImplTest {
         userServices.register(registerUserRequest);
         long currentlyRegistered = userServices.findAll().size();
         assertEquals(currentlyRegistered, userServices.getNumberOfUsers());
+
         LoginUserRequest loginRequest = new LoginUserRequest();
         loginRequest.setUsername(registerUserRequest.getUsername());
         loginRequest.setPassword(registerUserRequest.getPassword());

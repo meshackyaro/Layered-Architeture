@@ -32,5 +32,8 @@ public interface UserServices {
 
     List<Note> findNoteByAuthorAndTitle(String author, String title);
 
-//   Note findNoteBy(String author, String title);
+    List<Note> findNoteByAuthorAndContent(String author, String content);
+
+    List<Note> findNoteByContent(String username, String keyword);
+
 }

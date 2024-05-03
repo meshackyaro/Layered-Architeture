@@ -7,11 +7,15 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 @Repository
 public interface NoteRepository extends MongoRepository<Note, String> {
+
+
     Note findNoteById(String id);
 
     List<Note> findNoteByAuthor(String username);
 
     List<Note> findNoteByAuthorAndTitle(String author, String title);
 
-//    List<Note> findAllNotesFor(String username);
+    List<Note> findNoteByAuthorAndContent(String author, String content);
+
+    List<Note> findNoteByContent(String username, String keyword);
 }

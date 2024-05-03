@@ -169,15 +169,18 @@ public class NoteServicesImpl implements NoteServices {
     }
 
     @Override
-    public List<Note> findNoteByContent(String author, String content) {
-        List<Note> foundNotes = noteRepository.findNoteByAuthorAndTitle(author, content);
+    public List<Note> findNoteByAuthorAndContent(String author, String content) {
+        List<Note> foundNotes = noteRepository.findNoteByAuthorAndContent(author, content);
         if (foundNotes == null) throw new NoteNotFoundException("Note not found");
         return foundNotes;
     }
 
-//    @Override
-//    public List<Note> findAllNotesFor(String username) {
-//        return noteRepository.findNoteByAuthor(username);
-//    }
+    @Override
+    public List<Note> findNoteByContent(String username, String keyword) {
+        List<Note> notes = noteRepository.findNoteByContent(username, keyword);
+        if (notes == null) throw new NoteNotFoundException("Note not found");
+
+        return notes;
+    }
 
 }
