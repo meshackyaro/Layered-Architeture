@@ -13,6 +13,7 @@ import java.util.List;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/notes")
 public class UserController {
@@ -66,16 +67,16 @@ public class UserController {
         }
     }
 
-//    @PostMapping("/shareNote")
-//    public ResponseEntity<?> shareNote(@RequestBody ShareNoteRequest shareNoteRequest) {
-//        try {
-//            ShareNoteResponse response = userServices.shareNote(shareNoteRequest);
-//            return new ResponseEntity<>(new APIResponse(true, response), CREATED);
-//        }
-//        catch (NoteManagerException e) {
-//            return new ResponseEntity<>(new APIResponse(false, e.getMessage()), BAD_REQUEST);
-//        }
-//    }
+    @PostMapping("/shareNote")
+    public ResponseEntity<?> shareNote(@RequestBody ShareNoteRequest shareNoteRequest) {
+        try {
+            ShareNoteResponse response = userServices.shareNote(shareNoteRequest);
+            return new ResponseEntity<>(new APIResponse(true, response), CREATED);
+        }
+        catch (NoteManagerException e) {
+            return new ResponseEntity<>(new APIResponse(false, e.getMessage()), BAD_REQUEST);
+        }
+    }
 
     @DeleteMapping("/deleteNote")
     public ResponseEntity<?> deleteNote(@RequestBody DeleteNoteRequest deleteNoteRequest) {
@@ -84,17 +85,6 @@ public class UserController {
             return new ResponseEntity<>(new APIResponse(true, response), CREATED);
         }
         catch(NoteManagerException e) {
-            return new ResponseEntity<>(new APIResponse(false, e.getMessage()), BAD_REQUEST);
-        }
-
-    }
-
-    @GetMapping("/findAllNotes")
-    public ResponseEntity<?> findAllNotes() {
-        try {
-            List<Note> notes = noteServices.findAll();
-            return new ResponseEntity<>(new APIResponse(true, notes), CREATED);
-        }catch (NoteManagerException e) {
             return new ResponseEntity<>(new APIResponse(false, e.getMessage()), BAD_REQUEST);
         }
 
@@ -125,7 +115,7 @@ public class UserController {
     }
 
     @GetMapping("/findNoteByAuthorAndTitle")
-    public ResponseEntity<?> findNoteByUser(@RequestBody FindNoteByUserRequest findNoteRequest) {
+    public ResponseEntity<?> findNoteByUser(@RequestBody FindNoteByAuthorAndTitleRequest findNoteRequest) {
         try {
             List<Note> notes = noteServices.findNoteByAuthorAndTitle(findNoteRequest.getAuthor(), findNoteRequest.getTitle());
             return new ResponseEntity<>(new APIResponse(true, notes), CREATED);
@@ -136,16 +126,5 @@ public class UserController {
 
     }
 
-    @GetMapping("/findNoteByContent")
-    public ResponseEntity<?> findNoteByContent(@RequestBody FindNoteByContentRequest findNoteRequest) {
-        try {
-            List<Note> notes = noteServices.findNoteByAuthorAndContent(findNoteRequest.getAuthor(), findNoteRequest.getContent());
-            return new ResponseEntity<>(new APIResponse(true, notes), CREATED);
-        }
-        catch (NoteManagerException e) {
-            return new ResponseEntity<>(new APIResponse(false, e.getMessage()), BAD_REQUEST);
-        }
-
-    }
 
 }

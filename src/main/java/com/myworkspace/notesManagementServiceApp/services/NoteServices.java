@@ -15,7 +15,7 @@ public interface NoteServices {
 
     UpdateNoteResponse updateNote(UpdateNoteRequest updateNoteRequest);
 
-    Note findNoteById(String title);
+    Note findNoteById(String id);
 
     DeleteNoteResponse deleteNote(DeleteNoteRequest deleteNote);
 
@@ -27,9 +27,11 @@ public interface NoteServices {
 
     List<Note> findNotesByUser(String username);
 
-    List<Note> findNoteByAuthorAndTitle(String author, String title);
+    List<Note> findNoteByAuthorAndTitle(String username, String title);
 
-    List<Note> findNoteByAuthorAndContent(String author, String content);
+    List<Note> findNoteByAuthorAndContent(String username, String content);
 
-    List<Note> findNoteByContent(String username, String keyword);
+    Note findNoteBy(String username, String title);
+
+    //    List<Note> findNoteByContent(String username, String keyword);
 }

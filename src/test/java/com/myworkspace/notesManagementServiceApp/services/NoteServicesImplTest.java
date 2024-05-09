@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+
 public class NoteServicesImplTest {
     @Autowired
     private NoteRepository noteRepository;
@@ -124,7 +125,7 @@ public class NoteServicesImplTest {
 
         DeleteNoteRequest deleteNote = new DeleteNoteRequest();
         deleteNote.setId(response1.getId());
-        deleteNote.setTitle("Title");
+        deleteNote.setTitle(createNoteRequest.getTitle());
         deleteNote.setAuthor(createNoteRequest.getAuthor());
         DeleteNoteResponse response2 = noteServices.deleteNote(deleteNote);
         long currentNotes = noteServices.findAll().size();
@@ -153,61 +154,62 @@ public class NoteServicesImplTest {
         deleteNote.setAuthor("username");
         assertThrows(NoteNotFoundException.class, ()-> noteServices.deleteNote(deleteNote));
     }
-//    @Test
-//    public void shareNoteTest() {
-//        userRepository.deleteAll();
-//        noteRepository.deleteAll();
-//        RegisterUserRequest registerUserRequest = new RegisterUserRequest();
-//        registerUserRequest.setUsername("username");
-//        registerUserRequest.setPassword("password");
-//        RegistrationResponse response = userServices.register(registerUserRequest);
-//        long currentlyRegistered = userServices.findAll().size();
-//        assertEquals(currentlyRegistered, userServices.getNumberOfUsers());
-//
-//        RegisterUserRequest registerUserRequest1 = new RegisterUserRequest();
-//        registerUserRequest.setUsername("newUsername");
-//        registerUserRequest.setPassword("password");
-//        RegistrationResponse response1 = userServices.register(registerUserRequest);
-//        long currentlyRegistered1 = userServices.findAll().size();
-//        assertEquals(currentlyRegistered1, userServices.getNumberOfUsers());
-//
-//        LoginUserRequest loginRequest = new LoginUserRequest();
-//        loginRequest.setUsername(registerUserRequest.getUsername());
-//        loginRequest.setPassword(registerUserRequest.getPassword());
-//        LoginResponse login = userServices.login(loginRequest);
-//        User user = userServices.findUserByUsername(loginRequest.getUsername());
-//        assertTrue(user.isLogged());
-//
-//        LoginUserRequest loginRequest1 = new LoginUserRequest();
-//        loginRequest.setUsername(registerUserRequest.getUsername());
-//        loginRequest.setPassword(registerUserRequest.getPassword());
-//        LoginResponse login1 = userServices.login(loginRequest);
-//        User user1 = userServices.findUserByUsername(loginRequest.getUsername());
-//        assertTrue(user1.isLogged());
-//
-//        CreateNoteRequest createNoteRequest = new CreateNoteRequest();
-//        createNoteRequest.setTitle("Title");
-//        createNoteRequest.setContent("Content");
-//        createNoteRequest.setAuthor(registerUserRequest.getUsername());
-//        CreateNoteResponse response2 = noteServices.createNote(createNoteRequest);
-//        long currentNote = noteServices.findAll().size();
-//        assertEquals(currentNote, noteServices.count());
-//        Note foundNote = noteServices.findNoteById("Title");
-//        assertEquals("Title", foundNote.getTitle());
-//
-//        ShareNoteRequest shareNoteRequest = new ShareNoteRequest();
-//        shareNoteRequest.setTitle(createNoteRequest.getTitle());
-//        shareNoteRequest.setContent(createNoteRequest.getContent());
-//        shareNoteRequest.setAuthor(loginRequest.getUsername());
-//        shareNoteRequest.setShareTo(loginRequest1.getUsername());
-//        ShareNoteResponse response3 = userServices.shareNote(shareNoteRequest);
-//
-//        long currentNotes = noteServices.findAll().size();
-//        assertEquals(currentNotes, noteServices.count());
-//
-//        foundNote = noteServices.findNoteById("Title");
-//        assertEquals("Title", foundNote.getTitle());
-//    }
+    @Test
+    public void shareNoteTest() {
+        userRepository.deleteAll();
+        noteRepository.deleteAll();
+        RegisterUserRequest registerUserRequest = new RegisterUserRequest();
+        registerUserRequest.setUsername("username");
+        registerUserRequest.setPassword("password");
+        RegistrationResponse response = userServices.register(registerUserRequest);
+        long currentlyRegistered = userServices.findAll().size();
+        assertEquals(currentlyRegistered, userServices.getNumberOfUsers());
 
+        RegisterUserRequest registerUserRequest1 = new RegisterUserRequest();
+        registerUserRequest1.setUsername("newUsername");
+        registerUserRequest1.setPassword("password");
+        RegistrationResponse response1 = userServices.register(registerUserRequest1);
+        long currentlyRegistered1 = userServices.findAll().size();
+        assertEquals(currentlyRegistered1, userServices.getNumberOfUsers());
+
+        LoginUserRequest loginRequest = new LoginUserRequest();
+        loginRequest.setUsername(registerUserRequest.getUsername());
+        loginRequest.setPassword(registerUserRequest.getPassword());
+        LoginResponse login = userServices.login(loginRequest);
+//        System.out.println("************");
+//        System.out.println(loginRequest.getUsername());
+        User user = userServices.findUserByUsername(loginRequest.getUsername());
+        assertTrue(user.isLogged());
+
+        LoginUserRequest loginRequest1 = new LoginUserRequest();
+        loginRequest1.setUsername(registerUserRequest1.getUsername());
+        loginRequest1.setPassword(registerUserRequest1.getPassword());
+        LoginResponse login1 = userServices.login(loginRequest1);
+        User user1 = userServices.findUserByUsername(loginRequest1.getUsername());
+        assertTrue(user1.isLogged());
+
+        CreateNoteRequest createNoteRequest = new CreateNoteRequest();
+        createNoteRequest.setTitle("Title");
+        createNoteRequest.setContent("Content");
+        createNoteRequest.setAuthor(registerUserRequest.getUsername());
+        CreateNoteResponse response2 = noteServices.createNote(createNoteRequest);
+        long currentNote = noteServices.findAll().size();
+        assertEquals(currentNote, noteServices.count());
+        Note foundNote = noteServices.findNoteById(response2.getId());
+        assertEquals("Title", foundNote.getTitle());
+
+        ShareNoteRequest shareNoteRequest = new ShareNoteRequest();
+        shareNoteRequest.setId(response2.getId());
+        shareNoteRequest.setTitle(response2.getTitle());
+        shareNoteRequest.setContent(response2.getContent());
+        shareNoteRequest.setAuthor(loginRequest.getUsername());
+        shareNoteRequest.setShareTo(loginRequest1.getUsername());
+        ShareNoteResponse response3 = userServices.shareNote(shareNoteRequest);
+        long currentNotes = noteServices.findAll().size();
+        assertEquals(currentNotes, noteServices.count());
+
+        foundNote = noteServices.findNoteById(response2.getId());
+        assertEquals("Title", foundNote.getTitle());
+    }
 
 }

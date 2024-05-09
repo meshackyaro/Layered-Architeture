@@ -77,8 +77,8 @@ public class NoteServicesImpl implements NoteServices {
     }
 
     @Override
-    public Note findNoteById(String title) {
-        return noteRepository.findNoteById(title);
+    public Note findNoteById(String id) {
+        return noteRepository.findNoteById(id);
     }
 
     @Override
@@ -162,25 +162,32 @@ public class NoteServicesImpl implements NoteServices {
 
 
     @Override
-    public List<Note> findNoteByAuthorAndTitle(String author, String title) {
-        List<Note> notes = noteRepository.findNoteByAuthorAndTitle(author, title);
+    public List<Note> findNoteByAuthorAndTitle(String username, String title) {
+        List<Note> notes = noteRepository.findNoteByAuthorAndTitle(username, title);
         if (notes == null) throw new NoteNotFoundException("Note not found");
         return notes;
     }
 
     @Override
-    public List<Note> findNoteByAuthorAndContent(String author, String content) {
-        List<Note> foundNotes = noteRepository.findNoteByAuthorAndContent(author, content);
+    public List<Note> findNoteByAuthorAndContent(String username, String content) {
+        List<Note> foundNotes = noteRepository.findNoteByAuthorAndContent(username, content);
         if (foundNotes == null) throw new NoteNotFoundException("Note not found");
         return foundNotes;
     }
 
     @Override
-    public List<Note> findNoteByContent(String username, String keyword) {
-        List<Note> notes = noteRepository.findNoteByContent(username, keyword);
-        if (notes == null) throw new NoteNotFoundException("Note not found");
-
-        return notes;
+    public Note findNoteBy(String username, String title) {
+        Note note = noteRepository.findNoteBy(username, title);
+        if (note == null) throw new NoteNotFoundException("Note not found");
+        return note;
     }
+
+//    @Override
+//    public List<Note> findNoteByContent(String username, String keyword) {
+//        List<Note> notes = noteRepository.findNoteByContent(username, keyword);
+//        if (notes == null) throw new NoteNotFoundException("Note not found");
+//        return notes;
+//    }
+
 
 }
