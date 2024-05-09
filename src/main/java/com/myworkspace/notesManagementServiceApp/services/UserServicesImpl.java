@@ -92,11 +92,6 @@ public class UserServicesImpl implements UserServices {
         return userRepository.findByUsername(username.toLowerCase());
     }
 
-//    @Override
-//    public List<Note> findAllNotesFor(String username) {
-//        return noteService.findAllNotesFor(username);
-//    }
-
     @Override
     public CreateNoteResponse createNote(CreateNoteRequest createNoteRequest) {
         User foundUser = userRepository.findByUsername(createNoteRequest.getAuthor().toLowerCase());
@@ -152,7 +147,7 @@ public class UserServicesImpl implements UserServices {
             response.setActive(false);
             response.setMessage("Receiver not found");
         }
-//        Note foundNote = noteService.findNoteBy(shareNoteRequest.getAuthor(), shareNoteRequest.getTitle());
+
         Note foundNote = noteService.findNoteById(shareNoteRequest.getId());
 
         Note sharedNote = new Note();
